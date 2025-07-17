@@ -1,4 +1,5 @@
-import { connectToDatabase } from '@/app/blog/utils/db'; // tu conexión personalizada
+
+import { connectToDatabase } from '@/app/blog/utils/db';
 
 export async function GET() {
   try {
@@ -20,36 +21,48 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { title, content, image, status } = await request.json();
+    const { title, content, plainText, image, status } = await request.json();
 
+    // Validate required fields
     if (!title || !content) {
       return new Response(
         JSON.stringify({ error: 'Título y contenido son requeridos.' }),
-        { status: 400 }
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Optional: Validate Base64 image format
+    if (image && !image.startsWith('data:image/')) {
+      return new Response(
+        JSON.stringify({ error: 'La imagen destacada debe ser un string Base64 válido.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
     const db = await connectToDatabase();
 
     const post = {
-      title,           // 📝 Texto plano
-      content,         // ✅ Ya no es HTML, sino texto sin etiquetas
-      image,           // 🖼️ Base64 aparte (data:image/png;base64,...)
-      status,
+      title,           // 📝 Post title
+      content,         // 📜 HTML content with Base64 images and video iframes
+      plainText,       // 📄 Plain text version (optional, for search/previews)
+      image,           // 🖼️ Featured image (Base64)
+      status,          // ✅ Draft or published
       views: 0,
       reactions: [],
       createdAt: new Date(),
     };
 
-    await db.collection('posts').insertOne(post);
+    const result = await db.collection('posts').insertOne(post);
 
-    return new Response(JSON.stringify({ success: true }), { status: 201 });
-
+    return new Response(
+      JSON.stringify({ success: true, id: result.insertedId }),
+      { status: 201, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Error al guardar el post:', error);
     return new Response(
-      JSON.stringify({ error: 'Error interno del servidor' }),
-      { status: 500 }
+      JSON.stringify({ error: `Error interno del servidor: ${error.message}` }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }

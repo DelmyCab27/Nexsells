@@ -27,17 +27,14 @@ export default function CreatePostPage() {
     const editor = editorRef.current;
     if (!editor) return;
 
-    // Obtener tanto el contenido HTML como el texto plano
-    const htmlContent = editor.getHTML();
-    const plainText = editor.getText();
+    const plainText = editor.getText(); // Extrae texto plano del editor
 
     const res = await fetch('/blog/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
-        content: htmlContent, // Usar contenido HTML para mantener el formato
-        plainText: plainText, // Opcional: también enviar texto plano
+        content: plainText,
         image: imageBase64,
         status,
       }),

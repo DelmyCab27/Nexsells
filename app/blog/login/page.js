@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, Shield, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation'; // Solo si usas Next.js
 
 export default function LoginPage() {
   const [error, setError] = useState('');
@@ -8,12 +9,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter(); // Solo si usas Next.js
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return; // Evita envíos múltiples
+
     setIsLoading(true);
     setError('');
-    
+
     const formData = new FormData();
     formData.append('email', email);
     formData.append('password', password);
@@ -32,7 +36,8 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        window.location.href = data.redirect;
+        // Usa router.push para una redirección más fluida (si usas Next.js)
+        router.push(data.redirect);
       } else {
         setError(data.error);
       }
@@ -80,11 +85,11 @@ export default function LoginPage() {
           )}
 
           {/* Form */}
-          <div className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email field */}
             <div className="space-y-2">
-              <label 
-                htmlFor="email" 
+              <label
+                htmlFor="email"
                 className="block text-sm font-semibold text-gray-700"
               >
                 Correo Electrónico
@@ -100,7 +105,8 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
+                  disabled={isLoading} // Deshabilita el input durante la carga
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="tu@email.com"
                 />
               </div>
@@ -108,8 +114,8 @@ export default function LoginPage() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <label 
-                htmlFor="password" 
+              <label
+                htmlFor="password"
                 className="block text-sm font-semibold text-gray-700"
               >
                 Contraseña
@@ -119,19 +125,21 @@ export default function LoginPage() {
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
+                  disabled={isLoading} // Deshabilita el input durante la carga
+                  className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  disabled={isLoading} // Deshabilita el botón de mostrar contraseña
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -140,7 +148,7 @@ export default function LoginPage() {
 
             {/* Submit button */}
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={isLoading}
               className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:transform-none disabled:hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
@@ -153,7 +161,7 @@ export default function LoginPage() {
                 'Iniciar Sesión'
               )}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
