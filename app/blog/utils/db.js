@@ -1,5 +1,4 @@
-// app/blog/utils/db.js
-import { MongoClient } from 'mongodb';
+  import { MongoClient } from 'mongodb';
 import { ObjectId } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
@@ -12,7 +11,7 @@ if (!uri) {
 
 if (process.env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
-    client = new MongoClient(uri);
+    client = new MongoClient(uri); 
     global._mongoClientPromise = client.connect();
   }
   clientPromise = global._mongoClientPromise;
