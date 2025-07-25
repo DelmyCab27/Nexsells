@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/app/blog/utils/auth';
-import BlogHeader from '@/app/blog/components/BlogHeader';
+import { verifyToken } from '../../app/blog/utils/auth';
+import BlogHeader from '../../app/blog/components/BlogHeader';
 
 export default async function BlogLayout({ children }) {
   const cookieStore = await cookies();

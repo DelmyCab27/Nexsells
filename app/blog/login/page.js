@@ -1,22 +1,39 @@
 'use client';
 import { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, Shield, AlertCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // Solo si usas Next.js
+import { Eye, EyeOff, Lock, Mail, Shield, AlertCircle, CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // Solo si usas Next.js
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLoading) return; // Evita envíos múltiples
+    
+    // Evita envíos múltiples
+    if (isLoading) return;
 
     setIsLoading(true);
     setError('');
+    setSuccess('');
+
+    // Validación básica del lado del cliente
+    if (!email || !password) {
+      setError('Por favor completa todos los campos');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!email.includes('@')) {
+      setError('Por favor ingresa un email válido');
+      setIsLoading(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append('email', email);
@@ -29,23 +46,31 @@ export default function LoginPage() {
       });
 
       if (!response.ok) {
-        setError('No se pudo conectar con el servidor');
-        return;
+        throw new Error('No se pudo conectar con el servidor');
       }
 
       const data = await response.json();
 
       if (data.success) {
-        // Usa router.push para una redirección más fluida (si usas Next.js)
+        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
+        
+        // Redirige inmediatamente sin timeout
         router.push(data.redirect);
       } else {
-        setError(data.error);
+        setError(data.error || 'Error al iniciar sesión');
+        setIsLoading(false);
       }
     } catch (err) {
-      setError('Error al procesar la respuesta del servidor.');
-      console.error(err);
-    } finally {
+      setError('Error al procesar la respuesta del servidor');
+      console.error('Error de login:', err);
       setIsLoading(false);
+    }
+  };
+
+  // Función para manejar el Enter en los campos
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleSubmit(e);
     }
   };
 
@@ -73,6 +98,16 @@ export default function LoginPage() {
               Ingresa tus credenciales para continuar
             </p>
           </div>
+
+          {/* Success message */}
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <p className="text-green-700 text-sm font-medium">{success}</p>
+              </div>
+            </div>
+          )}
 
           {/* Error message */}
           {error && (
@@ -105,8 +140,9 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading} // Deshabilita el input durante la carga
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="tu@email.com"
                 />
               </div>
@@ -131,14 +167,15 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading} // Deshabilita el input durante la carga
-                  className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading} // Deshabilita el botón de mostrar contraseña
+                  disabled={isLoading}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -149,21 +186,49 @@ export default function LoginPage() {
             {/* Submit button */}
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:transform-none disabled:hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={isLoading || !email || !password}
+              className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:transform-none disabled:hover:shadow-lg disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Iniciando sesión...</span>
-                </div>
-              ) : (
-                'Iniciar Sesión'
-              )}
+              Iniciar Sesión
             </button>
           </form>
+
+          {/* Additional info */}
+          <div className="mt-6 text-center">
+            <p className="text-xs text-gray-500">
+              ¿Problemas para acceder? Contacta al administrador del sistema.
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Fullscreen Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 shadow-2xl border border-gray-200/50 max-w-sm w-full mx-4">
+            <div className="text-center">
+              {/* Loading spinner */}
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
+                <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              </div>
+              
+              {/* Loading text */}
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {success ? 'Redirigiendo...' : 'Iniciando sesión...'}
+              </h2>
+              
+              <p className="text-gray-600 text-sm">
+                {success ? 'Accediendo al panel de administración' : 'Por favor espera un momento'}
+              </p>
+              
+              {/* Loading progress bar */}
+              <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

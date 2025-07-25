@@ -31,3 +31,5 @@ export default async function DashboardPage() {
     </div>
   );
 }
+// Este componente maneja la página del panel de administración del blog
+// Verifica si el usuario está autenticado y muestra la vista de administración de posts
