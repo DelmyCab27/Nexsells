@@ -1,7 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
 import { FaAndroid, FaDesktop, FaUsers, FaGlobe } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
 
 const companyLogos = [
   { id: 1, src: '/logos/logo01.svg', alt: 'Empresa 1' },
@@ -12,125 +11,96 @@ const companyLogos = [
   { id: 6, src: '/logos/logo06.svg', alt: 'Empresa 6' },
 ];
 
+const stats = [
+  { value: '2052', label: 'Descargas', icon: <FaAndroid /> },
+  { value: '1100', label: 'Activos', icon: <FaUsers /> },
+  { value: '1570', label: 'En línea', icon: <FaGlobe /> },
+];
+
 export default function PremiumHero() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen bg-[#1E1E3C]">
-        <section className="relative pt-20 pb-16 overflow-hidden bg-[#1E1E3C]">
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
-              <div className="flex-1 z-10">
-                <div className="mb-8"></div>
-              </div>
-              <div className="flex-1 w-full p-8 rounded-xl shadow-xl bg-[#F8FAFC] border-2 border-[#FF9500]"></div>
-            </div>
-          </div>
-        </section>
-        <div className="w-full py-20 relative bg-[#F8FAFC]"></div>
-      </div>
-    );
-  }
-
   return (
     <>
+      {/* HERO */}
       <section className="relative pt-20 pb-16 overflow-hidden bg-[#1E1E3C]">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
-            <div className="flex-1 z-10">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="mb-8"
-              >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                  Potencia tu negocio con nuestra <br />
-                  <span className="text-[#D6DF2A]">solución integral</span>
-                </h1>
-
-                <p className="text-lg md:text-xl mb-8 max-w-2xl leading-relaxed text-[#CBD5E0]">
-                  La plataforma de Ventas en Ruta más completa del mercado, con app móvil y dashboard web para gestionar tu equipo comercial.
-                </p>
-
-                {/* Buttons - Tamaño ajustado */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <motion.a
-                    whileHover={{ y: -3, scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    href="#"
-                    className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium shadow-lg bg-[#D6DF2A] text-[#1E1E3C] hover:bg-[#c4cd25] transition-colors"
-                  >
-                    <FaAndroid className="text-xl" />
-                    <div className="text-left">
-                      <div className="font-semibold text-sm sm:text-base">Descarga la App</div>
-                      <div className="text-xs">AlphaPyME</div>
-                    </div>
-                  </motion.a>
-
-                  <motion.a
-                    whileHover={{ y: -3, scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    href="#"
-                    className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium shadow-lg bg-[#00ACFD] text-white hover:bg-[#0099e0] transition-colors"
-                  >
-                    <FaDesktop className="text-xl" />
-                    <div className="text-left">
-                      <div className="font-semibold text-sm sm:text-base">Acceso Plataforma</div>
-                      <div className="text-xs">AlphaPyME</div>
-                    </div>
-                  </motion.a>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Stats Card */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
+          
+          {/* Left Content */}
+          <div className="flex-1 z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex-1 w-full p-8 rounded-xl shadow-xl bg-[#F8FAFC]"
+              transition={{ duration: 0.6 }}
+              className="mb-8"
             >
-              <h2 className="text-2xl font-bold mb-4 text-[#1E1E3C]">
-                Con la confianza de <span className="text-[#D6DF2A]">+1000 usuarios</span>
-              </h2>
-              <p className="font-medium mb-6 text-[#00ACFD]">Convierte tu empresa en Alpha</p>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                Potencia tu negocio con nuestra <br />
+                <span className="text-[#D6DF2A]">solución integral</span>
+              </h1>
+              <p className="text-lg md:text-xl mb-8 max-w-2xl leading-relaxed text-[#CBD5E0]">
+                La plataforma de Ventas en Ruta más completa del mercado, con app móvil y dashboard web para gestionar tu equipo comercial.
+              </p>
 
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { value: '2052', label: 'Descargas', icon: <FaAndroid /> },
-                  { value: '1100', label: 'Activos', icon: <FaUsers /> },
-                  { value: '1570', label: 'En línea', icon: <FaGlobe /> }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ y: -3, scale: 1.05 }}
-                    className="p-3 rounded-lg text-center bg-[#D6DF2A]/20 border border-[#D6DF2A]"
-                  >
-                    <div className="flex justify-center mb-2">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#D6DF2A] text-[#1E1E3C]">
-                        {stat.icon}
-                      </div>
-                    </div>
-                    <div className="text-lg font-bold text-[#1E1E3C]">{stat.value}</div>
-                    <div className="text-sm font-medium text-black">{stat.label}</div>
-                  </motion.div>
-                ))}
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <CTAButton
+                  href="#"
+                  bgColor="#D6DF2A"
+                  textColor="#1E1E3C"
+                  hoverColor="#c4cd25"
+                  icon={<FaAndroid className="text-xl" />}
+                  title="Descarga la App"
+                  subtitle="AlphaPyME"
+                />
+                <CTAButton
+                  href="#"
+                  bgColor="#00ACFD"
+                  textColor="white"
+                  hoverColor="#0099e0"
+                  icon={<FaDesktop className="text-xl" />}
+                  title="Acceso Plataforma"
+                  subtitle="AlphaPyME"
+                />
               </div>
             </motion.div>
           </div>
+
+          {/* Stats Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex-1 w-full p-8 rounded-xl shadow-xl bg-[#F8FAFC]"
+          >
+            <h2 className="text-2xl font-bold mb-4 text-[#1E1E3C]">
+              Con la confianza de <span className="text-[#D6DF2A]">+1000 usuarios</span>
+            </h2>
+            <p className="font-medium mb-6 text-[#00ACFD]">Convierte tu empresa en Alpha</p>
+
+            <div className="grid grid-cols-3 gap-4">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ y: -3, scale: 1.05 }}
+                  className="p-3 rounded-lg text-center bg-[#D6DF2A]/20 border border-[#D6DF2A]"
+                >
+                  <div className="flex justify-center mb-2">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#D6DF2A] text-[#1E1E3C]">
+                      {stat.icon}
+                    </div>
+                  </div>
+                  <div className="text-lg font-bold text-[#1E1E3C]">{stat.value}</div>
+                  <div className="text-sm font-medium text-black">{stat.label}</div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      <div className="w-full py-20 relative bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-12">
+      {/* Logos Section */}
+      <section className="w-full py-20 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="mb-12">
             <h3 className="text-sm font-medium uppercase tracking-widest mb-3 text-[#00ACFD]">
               Nuestros Aliados
             </h3>
@@ -142,7 +112,6 @@ export default function PremiumHero() {
             </p>
           </div>
 
-          {/* Minimalist Logos Grid - No Containers */}
           <div className="flex flex-wrap justify-center items-center gap-16 px-8">
             {companyLogos.map((logo) => (
               <motion.img
@@ -156,7 +125,31 @@ export default function PremiumHero() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
     </>
+  );
+}
+
+// Reusable CTA Button Component
+function CTAButton({ href, bgColor, textColor, hoverColor, icon, title, subtitle }) {
+  return (
+    <motion.a
+      whileHover={{ y: -3, scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      href={href}
+      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium shadow-lg transition-colors`}
+      style={{
+        backgroundColor: bgColor,
+        color: textColor,
+      }}
+      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}
+      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
+    >
+      {icon}
+      <div className="text-left">
+        <div className="font-semibold text-sm sm:text-base">{title}</div>
+        <div className="text-xs">{subtitle}</div>
+      </div>
+    </motion.a>
   );
 }
